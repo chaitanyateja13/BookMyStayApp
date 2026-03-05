@@ -13,11 +13,6 @@ class RoomInventory {
     public int getAvailability(String type) {
         return availability.getOrDefault(type, 0);
     }
-
-    public void bookRoom(String type) {
-        if(getAvailability(type) > 0)
-            availability.put(type, getAvailability(type) - 1);
-    }
 }
 
 // Abstract Room class
@@ -35,7 +30,7 @@ abstract class Room {
     public abstract void displayDetails();
 }
 
-// Concrete Room types
+// Concrete Room classes
 class SingleRoom extends Room {
     public SingleRoom() { super("Single", 1, 100); }
     public void displayDetails() {
@@ -57,19 +52,14 @@ class SuiteRoom extends Room {
     }
 }
 
-// Main application
+// Main Application
 public class BookMyStayApp {
 
     public static void main(String[] args) {
         RoomInventory inventory = new RoomInventory();
         Room[] rooms = { new SingleRoom(), new DoubleRoom(), new SuiteRoom() };
 
-        System.out.println("Available rooms for guests:");
-        for(Room r : rooms) {
-            if(inventory.getAvailability(r.type) > 0) r.displayDetails();
-        }
-
-        System.out.println("\nGuest search results (rooms with availability > 0):");
+        System.out.println("Guest search results (rooms with availability > 0):");
         for(Room r : rooms) {
             int available = inventory.getAvailability(r.type);
             if(available > 0) {
