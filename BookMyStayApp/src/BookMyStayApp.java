@@ -1,5 +1,6 @@
 import java.util.HashMap;
 
+// Inventory class
 class RoomInventory {
     HashMap<String, Integer> availability = new HashMap<>();
 
@@ -9,19 +10,73 @@ class RoomInventory {
         availability.put("Suite", 2);
     }
 
-    public int getAvailability(String type) { return availability.getOrDefault(type, 0); }
+    public int getAvailability(String type) {
+        return availability.getOrDefault(type, 0);
+    }
+
     public void bookRoom(String type) {
-        if(getAvailability(type) > 0) availability.put(type, getAvailability(type)-1);
+        if(getAvailability(type) > 0)
+            availability.put(type, getAvailability(type) - 1);
     }
 }
 
+// Abstract Room class
+abstract class Room {
+    String type;
+    int beds;
+    double price;
+
+    public Room(String type, int beds, double price) {
+        this.type = type;
+        this.beds = beds;
+        this.price = price;
+    }
+
+    public abstract void displayDetails();
+}
+
+// Concrete Room types
+class SingleRoom extends Room {
+    public SingleRoom() { super("Single", 1, 100); }
+    public void displayDetails() {
+        System.out.println(type + " Room: Beds=" + beds + ", Price=" + price);
+    }
+}
+
+class DoubleRoom extends Room {
+    public DoubleRoom() { super("Double", 2, 180); }
+    public void displayDetails() {
+        System.out.println(type + " Room: Beds=" + beds + ", Price=" + price);
+    }
+}
+
+class SuiteRoom extends Room {
+    public SuiteRoom() { super("Suite", 3, 300); }
+    public void displayDetails() {
+        System.out.println(type + " Room: Beds=" + beds + ", Price=" + price);
+    }
+}
+
+// Main application
 public class BookMyStayApp {
 
     public static void main(String[] args) {
         RoomInventory inventory = new RoomInventory();
+        Room[] rooms = { new SingleRoom(), new DoubleRoom(), new SuiteRoom() };
 
-        System.out.println("Single rooms available: " + inventory.getAvailability("Single"));
-        System.out.println("Double rooms available: " + inventory.getAvailability("Double"));
-        System.out.println("Suite rooms available: " + inventory.getAvailability("Suite"));
+        System.out.println("Available rooms for guests:");
+        for(Room r : rooms) {
+            if(inventory.getAvailability(r.type) > 0) r.displayDetails();
+        }
+
+        System.out.println("\nGuest search results (rooms with availability > 0):");
+        for(Room r : rooms) {
+            int available = inventory.getAvailability(r.type);
+            if(available > 0) {
+                System.out.print(r.type + " room is available. ");
+                r.displayDetails();
+                System.out.println("Remaining: " + available);
+            }
+        }
     }
 }
