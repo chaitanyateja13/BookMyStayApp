@@ -1,47 +1,42 @@
 import java.util.*;
 
-class Service{
+class Reservation{
 
-    String name;
-    int cost;
+    String id;
+    String roomType;
 
-    Service(String name,int cost){
-        this.name=name;
-        this.cost=cost;
+    Reservation(String id,String roomType){
+        this.id=id;
+        this.roomType=roomType;
     }
 }
 
 public class BookMyStayApp {
 
-    static Map<String,List<Service>> reservationServices = new HashMap<>();
+    static List<Reservation> bookingHistory = new ArrayList<>();
 
     public static void main(String[] args) {
 
-        addService("RES-1", new Service("Breakfast",500));
-        addService("RES-1", new Service("Airport Pickup",1000));
+        confirmBooking("RES1","DELUXE");
+        confirmBooking("RES2","STANDARD");
 
-        calculateCost("RES-1");
+        showHistory();
     }
 
-    public static void addService(String reservationId, Service service){
+    public static void confirmBooking(String id,String room){
 
-        reservationServices
-                .computeIfAbsent(reservationId,k->new ArrayList<>())
-                .add(service);
+        Reservation r = new Reservation(id,room);
 
-        System.out.println(service.name+" added to "+reservationId);
+        bookingHistory.add(r);
+
+        System.out.println("Booking confirmed "+id);
     }
 
-    public static void calculateCost(String reservationId){
+    public static void showHistory(){
 
-        List<Service> services = reservationServices.get(reservationId);
+        for(Reservation r:bookingHistory){
 
-        int total = 0;
-
-        for(Service s : services){
-            total += s.cost;
+            System.out.println(r.id+" -> "+r.roomType);
         }
-
-        System.out.println("Total Add-on Cost: "+total);
     }
 }
