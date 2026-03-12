@@ -1,33 +1,45 @@
+import java.io.*;
 import java.util.*;
 
 public class BookMyStayApp {
 
-    static int inventory = 2;
+    static List<String> bookings = new ArrayList<>();
 
-    public static synchronized void bookRoom(String guest){
+    public static void main(String[] args) throws Exception{
 
-        if(inventory>0){
+        bookings.add("RES-1 DELUXE");
+        bookings.add("RES-2 STANDARD");
 
-            System.out.println(guest+" booked room");
+        saveState();
 
-            inventory--;
-
-        }else{
-
-            System.out.println("No room for "+guest);
-        }
+        loadState();
     }
 
-    public static void main(String[] args){
+    public static void saveState() throws Exception{
 
-        Thread t1 = new Thread(()->bookRoom("Guest1"));
+        ObjectOutputStream oos =
+                new ObjectOutputStream(new FileOutputStream("bookings.dat"));
 
-        Thread t2 = new Thread(()->bookRoom("Guest2"));
+        oos.writeObject(bookings);
 
-        Thread t3 = new Thread(()->bookRoom("Guest3"));
+        oos.close();
 
-        t1.start();
-        t2.start();
-        t3.start();
+        System.out.println("State saved");
+    }
+
+    public static void loadState() throws Exception{
+
+        ObjectInputStream ois =
+                new ObjectInputStream(new FileInputStream("bookings.dat"));
+
+        List<String> data = (List<String>) ois.readObject();
+
+        System.out.println("Recovered Data");
+
+        for(String s:data){
+            System.out.println(s);
+        }
+
+        ois.close();
     }
 }
