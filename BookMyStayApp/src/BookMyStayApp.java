@@ -2,25 +2,32 @@ import java.util.*;
 
 public class BookMyStayApp {
 
-    static Stack<String> releasedRooms = new Stack<>();
+    static int inventory = 2;
 
-    static Map<String,Integer> inventory = new HashMap<>();
+    public static synchronized void bookRoom(String guest){
+
+        if(inventory>0){
+
+            System.out.println(guest+" booked room");
+
+            inventory--;
+
+        }else{
+
+            System.out.println("No room for "+guest);
+        }
+    }
 
     public static void main(String[] args){
 
-        inventory.put("DELUXE",1);
+        Thread t1 = new Thread(()->bookRoom("Guest1"));
 
-        cancelBooking("ROOM-1","DELUXE");
+        Thread t2 = new Thread(()->bookRoom("Guest2"));
 
-        System.out.println("Released Rooms "+releasedRooms);
-    }
+        Thread t3 = new Thread(()->bookRoom("Guest3"));
 
-    public static void cancelBooking(String roomId,String type){
-
-        releasedRooms.push(roomId);
-
-        inventory.put(type,inventory.get(type)+1);
-
-        System.out.println("Booking cancelled for "+roomId);
+        t1.start();
+        t2.start();
+        t3.start();
     }
 }
