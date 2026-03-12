@@ -1,51 +1,47 @@
 import java.util.*;
 
+class Service{
+
+    String name;
+    int cost;
+
+    Service(String name,int cost){
+        this.name=name;
+        this.cost=cost;
+    }
+}
+
 public class BookMyStayApp {
 
-    static Queue<String> bookingQueue = new LinkedList<>();
-
-    static Map<String, Integer> inventory = new HashMap<>();
-
-    static Map<String, Set<String>> allocatedRooms = new HashMap<>();
-
-    static int roomCounter = 1;
+    static Map<String,List<Service>> reservationServices = new HashMap<>();
 
     public static void main(String[] args) {
 
-        inventory.put("DELUXE", 2);
-        inventory.put("STANDARD", 3);
+        addService("RES-1", new Service("Breakfast",500));
+        addService("RES-1", new Service("Airport Pickup",1000));
 
-        bookingQueue.add("DELUXE");
-        bookingQueue.add("STANDARD");
-        bookingQueue.add("DELUXE");
-
-        processBookings();
+        calculateCost("RES-1");
     }
 
-    public static void processBookings() {
+    public static void addService(String reservationId, Service service){
 
-        while(!bookingQueue.isEmpty()) {
+        reservationServices
+                .computeIfAbsent(reservationId,k->new ArrayList<>())
+                .add(service);
 
-            String roomType = bookingQueue.poll();
+        System.out.println(service.name+" added to "+reservationId);
+    }
 
-            int available = inventory.getOrDefault(roomType,0);
+    public static void calculateCost(String reservationId){
 
-            if(available > 0) {
+        List<Service> services = reservationServices.get(reservationId);
 
-                String roomId = "ROOM-" + roomCounter++;
+        int total = 0;
 
-                allocatedRooms
-                        .computeIfAbsent(roomType,k->new HashSet<>())
-                        .add(roomId);
-
-                inventory.put(roomType,available-1);
-
-                System.out.println("Reservation confirmed : "+roomType+" -> "+roomId);
-
-            } else {
-
-                System.out.println("No rooms available for "+roomType);
-            }
+        for(Service s : services){
+            total += s.cost;
         }
+
+        System.out.println("Total Add-on Cost: "+total);
     }
 }
