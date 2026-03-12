@@ -1,13 +1,8 @@
 import java.util.*;
 
-class InvalidBookingException extends Exception{
-
-    InvalidBookingException(String message){
-        super(message);
-    }
-}
-
 public class BookMyStayApp {
+
+    static Stack<String> releasedRooms = new Stack<>();
 
     static Map<String,Integer> inventory = new HashMap<>();
 
@@ -15,34 +10,17 @@ public class BookMyStayApp {
 
         inventory.put("DELUXE",1);
 
-        try{
+        cancelBooking("ROOM-1","DELUXE");
 
-            bookRoom("DELUXE");
-
-            bookRoom("SUITE");
-
-        }catch(Exception e){
-
-            System.out.println("Booking Failed : "+e.getMessage());
-        }
+        System.out.println("Released Rooms "+releasedRooms);
     }
 
-    public static void bookRoom(String type) throws InvalidBookingException{
+    public static void cancelBooking(String roomId,String type){
 
-        if(!inventory.containsKey(type)){
+        releasedRooms.push(roomId);
 
-            throw new InvalidBookingException("Invalid Room Type");
-        }
+        inventory.put(type,inventory.get(type)+1);
 
-        int available = inventory.get(type);
-
-        if(available<=0){
-
-            throw new InvalidBookingException("No rooms available");
-        }
-
-        inventory.put(type,available-1);
-
-        System.out.println("Room booked "+type);
+        System.out.println("Booking cancelled for "+roomId);
     }
 }
